@@ -1,0 +1,19 @@
+[package]
+name = "jieba-php"
+version = "0.1.0"
+authors = ["jmjoy <jmjoy@apache.org>"]
+edition = "2021"
+license = "MulanPSL-2.0"
+description = "The Jieba Chinese Word Segmentation Implemented in Rust Bound for PHP."
+repository = "https://github.com/phper-framework/jieba-php"
+
+[lib]
+name = "jieba"
+crate-type = ["cdylib"]
+
+[dependencies]
+jieba-rs = "0.7.2"
+phper = "0.14.1"
+
+[build-dependencies]
+phper-build = "0.14.1"

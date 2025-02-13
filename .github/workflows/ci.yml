@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches: [ "**" ]
+
+env:
+  RUST_LOG: debug
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: "1"
+  RUSTFLAGS: "-D warnings"
+  LLVM_CONFIG_PATH: llvm-config-18
+
+jobs:
+  ci:
+    name: CI
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install libclang for Linux
+        run: sudo apt-get update && sudo apt-get install -y llvm-18-dev libclang-18-dev
+
+      - name: Install Rust Nightly
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          components: rustfmt
+
+      - name: Setup cargo cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ci-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Cargo fmt
+        uses: actions-rs/cargo@v1
+        with:
+          toolchain: nightly
+          command: fmt
+          args: --all -- --check
+
+      - name: Cargo clippy
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --release
+
+      - name: Cargo build
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release
+
+      - name: PHP Test
+        run: php -d "extension=target/release/libjieba.so" -r "print_r((new Jieba())->cut('我们中出了一个叛徒'));"
