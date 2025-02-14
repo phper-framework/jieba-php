@@ -23,9 +23,9 @@ cargo build --release
 ## Run
 
 ```shell
-php -d "extension=target/debug/libjieba.so" --ri jieba
+php -d "extension=target/release/libjieba.so" --ri jieba
 
-php -d "extension=target/debug/libjieba.so" -r "print_r((new Jieba())->cut('我们中出了一个叛徒'));"
+php -d "extension=target/release/libjieba.so" -r "print_r((new Jieba())->cut('我们中出了一个叛徒'));"
 ```
 
 ## API
